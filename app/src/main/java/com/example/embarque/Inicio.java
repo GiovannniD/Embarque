@@ -1,5 +1,8 @@
 package com.example.embarque;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -22,6 +25,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.embarque.databinding.ActivityInicioBinding;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,19 +46,24 @@ public class Inicio extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private ActivityInicioBinding binding;
     public LinkedHashMap<String, String> Rutas= new LinkedHashMap<String, String>();
+    public LinkedHashMap<String, String> Vehiculos= new LinkedHashMap<String, String>();
     private String keyVehiculo,keyRuta,noPlaca;
     TextView  mTextView;
     EditText usuario;
+    SharedPreferences settings;
     OkHttpClient client = new OkHttpClient();
+    setting conf = new setting();
+    Gson g = new Gson();
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setting conf = new setting();
+
         binding = ActivityInicioBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
+        settings = this.getSharedPreferences("Sersa_Embarque", Context.MODE_PRIVATE);
         int SDK_INT = android.os.Build.VERSION.SDK_INT;
         if (SDK_INT > 8)
         {
@@ -67,19 +76,19 @@ public class Inicio extends AppCompatActivity {
      //   Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
         ArrayList<String> data= new ArrayList<String>();
         ArrayList<String> data2= new ArrayList<String>();
-        String json =bowlingJson("Jesse", "Jake","");
+        String json =bowlingJson("Jesse");
 
         try {
 
-            String response = conf.api("http://"+conf.Link()+"/api/AppMobile/RutaEntrega", json);
+            String response = conf.api("http://"+conf.Link()+"/api/AppMobile/GetAllVehicles", json);
             //  obj = new JSONObject(response);
             JSONArray arr = new JSONArray(response);
            // Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
             for (int i = 0; i < arr.length(); i++)
             {
                 JSONObject e = arr.getJSONObject(i);
-                data.add(e.getString("desRuta")); //this adds an element to the list.
-                Rutas.put(e.getString("desRuta"),e.getString("keyRutaEntrega"));
+                data.add(e.getString("noPlaca")); //this adds an element to the list.
+                Vehiculos.put(e.getString("noPlaca"),e.getString("keyVehiculo"));
 
                 //  Toast.makeText(getApplicationContext(), LoadSucursal.get(arr.getJSONObject(i).getString("ip")), Toast.LENGTH_LONG).show();
             }
@@ -89,7 +98,7 @@ public class Inicio extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), e.getMessage().toString(), Toast.LENGTH_LONG).show();
         }
         mTextView = (TextView) findViewById(R.id.text);
-        usuario = (EditText) findViewById(R.id.usuario);
+        usuario = (EditText) findViewById(R.id.paquete);
 
 
 
@@ -102,7 +111,7 @@ public class Inicio extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //  Toast.makeText(getApplicationContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_LONG).show();
-                keyRuta=parent.getItemAtPosition(position).toString();
+                noPlaca=parent.getItemAtPosition(position).toString();
             }
 
             @Override
@@ -134,27 +143,44 @@ public class Inicio extends AppCompatActivity {
         }
     }
 
-    String bowlingJson(String keyRuta, String keyVehiculo,String Fecha) {
-      /*  return "{'winCondition':'HIGH_SCORE',"
-                + "'name':'Bowling',"
-                + "'round':4,"
-                + "'lastSaved':1367702411696,"
-                + "'dateStarted':1367702378785,"
-                + "'players':["
-                + "{'name':'" + player1 + "','history':[10,8,6,7,8],'color':-13388315,'total':39},"
-                + "{'name':'" + player2 + "','history':[6,10,5,10,10],'color':-48060,'total':41}"
-                + "]}";*/
+    String bowlingJson(String usuario) {
 
-        return "{'idStatusRoutes':'2',"
-                + "'keyRuta':'"+keyRuta+"',"
-                + "'keyVehiculo':'"+keyVehiculo+"',"
-                + "'routeDate':'"+Fecha+"'"
+        return "{'nombreUsuario':'"+usuario+"',"
+                + "'KeyUser':'0',"
                 + "}";
     }
 
     public void iniciar(View view) {
 if(!usuario.getText().toString().isEmpty()){
+    String nombreUsuario=usuario.getText().toString().trim();
+    String json =bowlingJson(nombreUsuario);
+    try {
 
+        String response = post("http://"+conf.Link()+"/api/AppMobile/IniciarEmbarque", json);
+        JSONArray arr = new JSONArray(response);
+        // Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
+        keyVehiculo= Vehiculos.get(keyVehiculo);
+
+        for (int i = 0; i < arr.length(); i++) {
+            JSONObject e = arr.getJSONObject(i);
+            Snackbar.make(view, "Sesion iniciada", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+            Intent intent = new Intent(Inicio.this, Embarque.class);
+            settings.edit().putString("keyVehiculo",keyVehiculo).apply();
+            settings.edit().putString("noPlaca",noPlaca).apply();
+            settings.edit().putString("nombreUsuario",nombreUsuario).apply();
+            settings.edit().putString("keyUsuario",e.getString("keyUsuario")).apply();
+            startActivity(intent);
+             finish();
+
+            // Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
+        }
+
+    } catch (IOException | JSONException e) {
+        Log.d("error", e.getMessage());
+        Snackbar.make(view, e.getMessage().toString(), Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+    }
 }else{
 
     Snackbar.make(view, "Ingrese un nombre de usuario", Snackbar.LENGTH_LONG)

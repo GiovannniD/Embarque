@@ -11,7 +11,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-       >
+        >
 
 
 
@@ -29,7 +29,7 @@
                 android:id="@+id/textview_first"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Seleccione un vehiculo"
+                android:text="Seleccione una Ruta"
                 android:layout_marginLeft="9dp"
                 android:textSize="10dp"
                 android:textStyle="bold"
@@ -38,27 +38,54 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+            <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/GridLayout1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:context=".GridXMLActivity" >
+
+                <Spinner
+                    android:layout_column="1"
+                    android:id="@+id/spinner1"
+                    style="@style/Widget.AppCompat.Spinner"
+                    android:layout_width="220dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="9dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/spinner_bg"
+                    android:dropDownWidth="310dp"
+                    android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                    android:paddingRight="14dp"
+                    android:popupBackground="@android:color/white"
+                    android:popupElevation="3dp"
+                    android:stateListAnimator="@drawable/spinner_sla"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
-            <Spinner
-                android:id="@+id/spinner1"
-                style="@style/Widget.AppCompat.Spinner"
-                android:layout_width="260dp"
-                android:layout_height="30dp"
-                android:layout_margin="9dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/spinner_bg"
-                android:dropDownWidth="310dp"
-                android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
-                android:paddingRight="14dp"
-                android:popupBackground="@android:color/white"
-                android:popupElevation="3dp"
-                android:stateListAnimator="@drawable/spinner_sla"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/actualizar"
+                    android:layout_width="50dp"
+                    android:layout_height="30dp"
+                    android:src="@android:drawable/ic_popup_sync"
+                    android:layout_columnSpan="1"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginLeft="0dp"
+                    android:text=""
+                    android:layout_gravity="center"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/botones"
+                    android:textSize="10dp"
+                    android:drawableTint="@android:color/background_light"
+                    />
+            </GridLayout>
+
+
 
             <TextView
                 android:id="@+id/textview_two"
@@ -84,30 +111,33 @@
                 android:layout_marginEnd="8dp"
                 android:clickable="true"
                 android:layout_marginLeft="9dp"
-
-                android:drawableLeft="@android:drawable/ic_menu_info_details"
+                android:drawableTint="@color/colorPrimary"
+                android:drawableLeft="@android:drawable/ic_menu_add"
                 android:ems="10"
                 android:focusable="true"
                 android:textSize="12dp"
-                android:hint="escriba un nombre de usuario"
+                android:hint="Escanne un paquete"
                 android:inputType="text"
                 android:maxLines="1"
                 />
             <Button
+                android:id="@+id/enlace"
                 android:layout_width="230dp"
                 android:layout_height="35dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="30dp"
-                android:text="Iniciar"
+                android:text="agregar enlace"
                 android:textColor="#FFFFFF"
                 android:textSize="10dp"
                 android:background="@drawable/botones"
                 android:drawableTint="@android:color/background_light"
-                android:onClick="iniciar"
+                android:onClick="agregarEnlace"
                 />
+
 
         </LinearLayout>
 
 
     </RelativeLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
