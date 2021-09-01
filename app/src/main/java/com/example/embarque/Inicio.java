@@ -159,7 +159,7 @@ if(!usuario.getText().toString().isEmpty()){
         String response = post("http://"+conf.Link()+"/api/AppMobile/IniciarEmbarque", json);
         JSONArray arr = new JSONArray(response);
         // Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
-        keyVehiculo= Vehiculos.get(keyVehiculo);
+        keyVehiculo= Vehiculos.get(noPlaca);
 
         for (int i = 0; i < arr.length(); i++) {
             JSONObject e = arr.getJSONObject(i);

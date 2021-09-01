@@ -85,13 +85,11 @@
                     />
             </GridLayout>
 
-
-
             <TextView
                 android:id="@+id/textview_two"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Usuario:"
+                android:text="Codigo del paquete"
                 android:layout_marginLeft="9dp"
                 android:textSize="10dp"
                 android:textStyle="bold"
@@ -100,26 +98,65 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-            <EditText
-                android:id="@+id/paquete"
+            <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/GridLayout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:context=".GridXMLActivity" >
 
-                android:layout_width="275dp"
-                android:layout_height="40dp"
-                android:layout_margin="5dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:clickable="true"
-                android:layout_marginLeft="9dp"
-                android:drawableTint="@color/colorPrimary"
-                android:drawableLeft="@android:drawable/ic_menu_add"
-                android:ems="10"
-                android:focusable="true"
-                android:textSize="12dp"
-                android:hint="Escanne un paquete"
-                android:inputType="text"
-                android:maxLines="1"
-                />
+                <EditText
+                    android:id="@+id/paquete"
+                    android:layout_width="200dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="5dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:clickable="true"
+                    android:layout_marginLeft="9dp"
+                    android:drawableTint="@color/colorPrimary"
+                    android:drawableLeft="@android:drawable/ic_menu_add"
+                    android:ems="10"
+                    android:focusable="true"
+                    android:textSize="12dp"
+                    android:hint="Escanne un paquete"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    />
+
+
+
+                <TextView
+                    android:id="@+id/conteo"
+                    android:layout_columnSpan="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:layout_marginLeft="5dp"
+                    android:textSize="24dp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:textColor="@color/colorAccent"
+                    app:layout_constraintBottom_toTopOf="@id/button_first"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </GridLayout>
+
+
+
+            <RelativeLayout
+                android:id="@+id/loadingPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true" />
+            </RelativeLayout>
             <Button
                 android:id="@+id/enlace"
                 android:layout_width="230dp"
@@ -131,7 +168,7 @@
                 android:textSize="10dp"
                 android:background="@drawable/botones"
                 android:drawableTint="@android:color/background_light"
-                android:onClick="agregarEnlace"
+
                 />
 
 
