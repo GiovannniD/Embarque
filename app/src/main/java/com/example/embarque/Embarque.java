@@ -74,9 +74,11 @@ public class Embarque extends AppCompatActivity {
     ImageButton button;
     Button enlace;
     Spinner spinner,spinner2;
-    public MediaPlayer mp;
+    public MediaPlayer mp,mp2;
     public SoundPool sp;
+    public SoundPool sp2;
     public int flujodemusica=0;
+    public int flujodemusica2=0;
   //  private TextInputLayout mNumeroProductoLabel;
    // private TextInputEditText mNumeroProducto;
     private int caso=0;
@@ -97,10 +99,12 @@ public class Embarque extends AppCompatActivity {
         paquete.requestFocus();
         findViewById(R.id.enlace).setVisibility(View.GONE);
         findViewById(R.id.actualizar).setVisibility(View.GONE);
-        mp= MediaPlayer.create(this, R.raw.timbre);
+        mp= MediaPlayer.create(this, R.raw.alerta1);
+        mp2= MediaPlayer.create(this, R.raw.alerta2);
         sp = new SoundPool(8, AudioManager.STREAM_MUSIC, 0);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        flujodemusica= sp.load(this,R.raw.timbre,1);
+        flujodemusica= sp.load(this,R.raw.alerta1,1);
+        flujodemusica2= sp.load(this,R.raw.alerta2,1);
         imageBtn();
         textChanged();
         agregarEnlace();
@@ -394,9 +398,14 @@ private String jsonPaquete(){
                 "    }";
     }
 
-    public void play_sp() {
+    public void play_sp1() {
 // TODO Auto-generated method stub
-        sp.play(flujodemusica, 1, 1, 0, 2, 1);
+        sp.play(flujodemusica, 1, 1, 0, 0, 1);
+    }
+
+    public void play_sp2() {
+// TODO Auto-generated method stub
+        sp.play(flujodemusica2, 1, 1, 0, 0, 1);
     }
     void postwithParameters(String url, String json) throws IOException{
 
@@ -462,12 +471,16 @@ private String jsonPaquete(){
                                             conteo.setText(e.getString("count"));
                                             caso=0;
                                         }else if(Integer.parseInt(e.getString("code")) == 1){
-                                            play_sp();
+                                            play_sp1();
+
+                                        }else if(Integer.parseInt(e.getString("code")) == 2){
+                                            play_sp2();
 
                                         }
+
                                     }else{
                                             llenarRutaMadre();}
-                                        Toast.makeText(getApplicationContext(), e.getString("msg"), Toast.LENGTH_LONG).show();}
+                                        Toast.makeText(getApplicationContext(), e.getString("msg"), Toast.LENGTH_SHORT).show();}
 
                                     paquete.setText("");
                                 } catch (JSONException e) {
