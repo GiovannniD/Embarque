@@ -2,9 +2,13 @@ package com.example.embarque;
 
 import static com.example.embarque.Inicio.JSON;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -59,8 +63,9 @@ public class Embarque extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityEmbarqueBinding binding;
-    private String keyVehiculo,keyRuta,noPlaca;
+    private String keyVehiculo,keyRuta,keyRutaMadre;
     public LinkedHashMap<String, String> Rutas= new LinkedHashMap<String, String>();
+    public LinkedHashMap<String, String> RutaMadre= new LinkedHashMap<String, String>();
     TextView  mTextView,conteo;
     EditText paquete,enlaceText;
     SharedPreferences settings;
@@ -68,7 +73,10 @@ public class Embarque extends AppCompatActivity {
     setting conf = new setting();
     ImageButton button;
     Button enlace;
-    Spinner spinner;
+    Spinner spinner,spinner2;
+    public MediaPlayer mp;
+    public SoundPool sp;
+    public int flujodemusica=0;
   //  private TextInputLayout mNumeroProductoLabel;
    // private TextInputEditText mNumeroProducto;
     private int caso=0;
@@ -86,7 +94,13 @@ public class Embarque extends AppCompatActivity {
         paquete = (EditText) findViewById(R.id.paquete);
         conteo = (TextView) findViewById(R.id.conteo);
         settings = this.getSharedPreferences("Sersa_Embarque", Context.MODE_PRIVATE);
-        paquete.findFocus();
+        paquete.requestFocus();
+        findViewById(R.id.enlace).setVisibility(View.GONE);
+        findViewById(R.id.actualizar).setVisibility(View.GONE);
+        mp= MediaPlayer.create(this, R.raw.timbre);
+        sp = new SoundPool(8, AudioManager.STREAM_MUSIC, 0);
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        flujodemusica= sp.load(this,R.raw.timbre,1);
         imageBtn();
         textChanged();
         agregarEnlace();
@@ -110,9 +124,10 @@ public class Embarque extends AppCompatActivity {
         }
         mTextView = (TextView) findViewById(R.id.text);
         spinner = findViewById(R.id.spinner1);
+        spinner2 = findViewById(R.id.spinner2);
         //   Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
+llenarRutaMadre();
 
-        llenarCombo();
        /* binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,14 +136,65 @@ public class Embarque extends AppCompatActivity {
             }
         });*/
     }
-private void llenarCombo(){
+
+    private void llenarRutaMadre(){
+        ArrayList<String> data= new ArrayList<String>();
+        ArrayList<String> data2= new ArrayList<String>();
+        String json =bowlingJson("Jesse");
+
+        try {
+
+            String response = conf.api("http://"+conf.Link()+"/api/AppMobile/GetAllRoutes", json);
+            //  obj = new JSONObject(response);
+            JSONArray arr = new JSONArray(response);
+            // Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
+            for (int i = 0; i < arr.length(); i++)
+            {
+                JSONObject e = arr.getJSONObject(i);
+                // Rutas.clear();
+                //    Toast.makeText(getApplicationContext(), e.getString("desRuta"), Toast.LENGTH_LONG).show();
+                data.add(e.getString("descripcionRuta")); //this adds an element to the list.
+                RutaMadre.put(e.getString("descripcionRuta"),e.getString("keyRuta"));
+
+                //  Toast.makeText(getApplicationContext(), LoadSucursal.get(arr.getJSONObject(i).getString("ip")), Toast.LENGTH_LONG).show();
+            }
+
+        } catch (IOException | JSONException e) {
+            //  Log.d("error", e.getMessage());
+            Toast.makeText(getApplicationContext(), e.getMessage().toString(), Toast.LENGTH_LONG).show();
+        }
+
+
+
+
+
+        ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.spinner_selected, data);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+
+
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //  Toast.makeText(getApplicationContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_LONG).show();
+                keyRutaMadre=parent.getItemAtPosition(position).toString();
+                llenarRutaEntrega();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+private void llenarRutaEntrega(){
     ArrayList<String> data= new ArrayList<String>();
     ArrayList<String> data2= new ArrayList<String>();
     String json =bowlingJson("Jesse");
 
     try {
 
-        String response = conf.api("http://"+conf.Link()+"/api/AppMobile/RutaEntrega", json);
+        String response = conf.apiPost("http://"+conf.Link()+"/api/AppMobile/RutaEntrega",rutaEntregajson(RutaMadre.get(keyRutaMadre)));
         //  obj = new JSONObject(response);
         JSONArray arr = new JSONArray(response);
         // Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
@@ -156,8 +222,8 @@ private void llenarCombo(){
     adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
 
 
-    spinner.setAdapter(adapter);
-    spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    spinner2.setAdapter(adapter);
+    spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             //  Toast.makeText(getApplicationContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_LONG).show();
@@ -177,6 +243,13 @@ private void llenarCombo(){
                 + "'KeyUser':'0',"
                 + "}";
     }
+
+    String rutaEntregajson(String KeyRuta) {
+     //   Toast.makeText(getApplicationContext(), "{'KeyRuta':'"+KeyRuta+"'}", Toast.LENGTH_SHORT).show();
+        return "{'KeyRuta':'"+KeyRuta+"'}";
+
+
+    }
    /* @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_embarque);
@@ -189,7 +262,7 @@ private void llenarCombo(){
             @Override
             public void onClick(View v) {
               //  Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_SHORT).show();
-                llenarCombo();
+                llenarRutaMadre();
             }
         });
     }
@@ -214,8 +287,11 @@ private void llenarCombo(){
                            public void onClick(DialogInterface dialog,int id) {
 
                                if (!TextUtils.isEmpty(enlaceText.getText().toString())){
+
                                     caso=0;
+
                                    try {
+                                       paquete.requestFocus();
                                        postwithParameters("http://"+conf.Link()+"/api/AppMobile/GuardarEnlace", jsonRuta(enlaceText.getText().toString()));
                                    } catch (IOException e) {
                                        e.printStackTrace();
@@ -226,6 +302,7 @@ private void llenarCombo(){
                                }else {
                                    Snackbar.make(getWindow().getDecorView().getRootView(), "El nombre del enlace no puede estar vacio!", Snackbar.LENGTH_LONG)
                                            .setAction("Action", null).show();
+                                   paquete.requestFocus();
 
                                }
 
@@ -236,6 +313,7 @@ private void llenarCombo(){
                                // if this button is clicked, just close
                                // the dialog box and do nothing
                                dialog.cancel();
+                               paquete.requestFocus();
                            }
                        });
 
@@ -273,6 +351,7 @@ private void llenarCombo(){
                // TODO Auto-generated method stub
                if(!paquete.getText().toString().isEmpty())
                {
+                   if(paquete.getText().toString().length()>=8){
                  //  Toast.makeText(getApplicationContext(), jsonPaquete(), Toast.LENGTH_LONG).show();
                    try {
 
@@ -282,6 +361,7 @@ private void llenarCombo(){
                    } catch (IOException e) {
                        e.printStackTrace();
                        Toast.makeText(getApplicationContext(), e.getMessage().toString(), Toast.LENGTH_LONG).show();
+                   }
                    }
                    //  Toast.makeText(getApplicationContext(), "hola", Toast.LENGTH_LONG).show();
                }else{
@@ -312,6 +392,11 @@ private String jsonPaquete(){
                 "        \"msg\": \"\",\n" +
                 "        \"code\": 0\n" +
                 "    }";
+    }
+
+    public void play_sp() {
+// TODO Auto-generated method stub
+        sp.play(flujodemusica, 1, 1, 0, 2, 1);
     }
     void postwithParameters(String url, String json) throws IOException{
 
@@ -376,11 +461,14 @@ private String jsonPaquete(){
                                         if (Integer.parseInt(e.getString("code")) == 0) {
                                             conteo.setText(e.getString("count"));
                                             caso=0;
+                                        }else if(Integer.parseInt(e.getString("code")) == 1){
+                                            play_sp();
+
                                         }
                                     }else{
-                                            llenarCombo();}
-                                     Toast.makeText(getApplicationContext(), e.getString("msg"), Toast.LENGTH_LONG).show();
-                                    }
+                                            llenarRutaMadre();}
+                                        Toast.makeText(getApplicationContext(), e.getString("msg"), Toast.LENGTH_LONG).show();}
+
                                     paquete.setText("");
                                 } catch (JSONException e) {
                                     e.printStackTrace();

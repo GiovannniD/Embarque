@@ -22,8 +22,9 @@ public class setting {
     public Map<String, String>  tempSavePackage = new HashMap<String, String>();
     public String Link()
     {
-        return "192.168.131.14:11000";
+        return "192.168.1.187:10000";
     }
+
 
     String api(String url, String json) throws IOException {
         RequestBody body = RequestBody.create(json, JSON);
@@ -43,10 +44,29 @@ public class setting {
 
         }
 
+    String apiPost(String url, String json) throws IOException {
+        RequestBody body = RequestBody.create(json, JSON);
+        client = new OkHttpClient.Builder()
+                .connectTimeout(120, TimeUnit.SECONDS)
+                .writeTimeout(120, TimeUnit.SECONDS)
+                .readTimeout(120, TimeUnit.SECONDS)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            return response.body().string();
+        }
+
+    }
 
 
 
-        public Map<String,String> JsonToMapString(JSONObject jsonObject) throws JSONException {
+
+
+    public Map<String,String> JsonToMapString(JSONObject jsonObject) throws JSONException {
         Map<String, String> map = new HashMap<String, String>();
         if(jsonObject != JSONObject.NULL) {
             Iterator<String> keysItr = jsonObject.keys();

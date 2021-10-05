@@ -163,6 +163,7 @@ if(!usuario.getText().toString().isEmpty()){
 
         for (int i = 0; i < arr.length(); i++) {
             JSONObject e = arr.getJSONObject(i);
+            if(Integer.parseInt(e.getString("keyUsuario"))!=0){
             Snackbar.make(view, "Sesion iniciada", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
             Intent intent = new Intent(Inicio.this, Embarque.class);
@@ -172,8 +173,8 @@ if(!usuario.getText().toString().isEmpty()){
             settings.edit().putString("keyUsuario",e.getString("keyUsuario")).apply();
             startActivity(intent);
              finish();
-
-            // Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
+            }
+             Toast.makeText(getApplicationContext(), e.getString("msg"), Toast.LENGTH_LONG).show();
         }
 
     } catch (IOException | JSONException e) {

@@ -84,7 +84,39 @@
                     android:drawableTint="@android:color/background_light"
                     />
             </GridLayout>
+            <TextView
 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Seleccione una Ruta de entrega"
+                android:layout_marginLeft="9dp"
+                android:textSize="10dp"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"
+                app:layout_constraintBottom_toTopOf="@id/button_first"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <Spinner
+                android:layout_column="1"
+                android:id="@+id/spinner2"
+                style="@style/Widget.AppCompat.Spinner"
+                android:layout_width="220dp"
+                android:layout_height="30dp"
+                android:layout_margin="9dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/spinner_bg"
+                android:dropDownWidth="310dp"
+                android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                android:paddingRight="14dp"
+                android:popupBackground="@android:color/white"
+                android:popupElevation="3dp"
+                android:stateListAnimator="@drawable/spinner_sla"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
             <TextView
                 android:id="@+id/textview_two"
                 android:layout_width="wrap_content"
